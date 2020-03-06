@@ -1,0 +1,303 @@
+<template>
+  <!--    <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">-->
+  <el-dialog
+    :title="dialogTitle"
+    :visible.sync="dialogVisible"
+    custom-class="page-dialog"
+  >
+    <el-form
+      ref="sysUserForm"
+      :rules="rules"
+      :model="form"
+      label-position="right"
+      label-width="80px"
+      class="page-form"
+      style="width: 100%;">
+
+      <el-form-item label="用户账号" prop="username">
+        <el-input v-model="form.username" placeholder="请输入用户账号" clearable :readonly="!isAdd"/>
+      </el-form-item>
+      <el-form-item label="用户名称" prop="nickname">
+        <el-input v-model="form.nickname"  placeholder="请输入用户名称" clearable :readonly="isDetail"/>
+      </el-form-item>
+      <el-form-item label="手机号码" prop="phone">
+        <el-input v-model="form.phone" placeholder="请输入手机号码" clearable :readonly="isDetail"/>
+      </el-form-item>
+      <el-form-item label="密码" prop="password" v-if="isAdd">
+        <el-input type="password" v-model="form.password" placeholder="请输入密码" clearable autocomplete="off" show-password/>
+      </el-form-item>
+      <el-form-item label="部门" prop="departmentId">
+        <tree-select
+          ref="treeSelect"
+          :data="treeSelectData"
+          :disabled="isDetail"
+          @getValue="getTreeSelectValue"
+        />
+      </el-form-item>
+      <el-form-item label="角色" prop="roleId">
+        <el-select v-model="form.roleId" filterable class="filter-item" placeholder="请选择" style="width: 100%" :disabled="isDetail">
+          <el-option v-for="item in roleOptions" :key="item.id" :label="item.name" :value="item.id"/>
+        </el-select>
+      </el-form-item>
+      <el-form-item label="状态" prop="state">
+        <el-radio-group v-model="form.state" :disabled="isDetail">
+          <el-radio :label="1">启用</el-radio>
+          <el-radio :label="0">禁用</el-radio>
+          <el-radio :label="2">锁定</el-radio>
+        </el-radio-group>
+      </el-form-item>
+      <el-form-item label="备注" prop="remark">
+        <el-input v-model="form.remark" :autosize="{ minRows: 2, maxRows: 4}" type="textarea" placeholder="请输入备注" :readonly="isDetail"/>
+      </el-form-item>
+    </el-form>
+    <div slot="footer" class="dialog-footer">
+      <template v-if="isDetail">
+        <el-button type="primary" @click="dialogVisible=false">关闭</el-button>
+      </template>
+      <template v-else-if="isAdd">
+        <el-button @click="restForm()">取消</el-button>
+        <el-button type="primary" @click="submitAddForm()">保存</el-button>
+      </template>
+      <template v-else-if="isUpdate">
+        <el-button @click="restForm()">取消</el-button>
+        <el-button type="primary" @click="submitUpdateForm()">修改</el-button>
+      </template>
+    </div>
+  </el-dialog>
+</template>
+
+<script>
+  import sysUserApi from '@/api/system/sys-user-api'
+  import sysDepartmentApi from '@/api/system/sys-department-api'
+  import sysRoleApi from '@/api/system/sys-role-api'
+  import TreeSelect from '@/components/TreeSelect/index'
+
+  export default {
+    name: 'SysUser',
+    components: { TreeSelect },
+    props: {
+      // detail: 详细页面，add: 添加页面，update：编辑页面
+      isDetail: {
+        type: Boolean,
+        default: false
+      },
+      isAdd: {
+        type: Boolean,
+        default: false
+      },
+      isUpdate: {
+        type: Boolean,
+        default: false
+      }
+    },
+    data() {
+      return {
+        dialogVisible: false,
+        dialogTitle: null,
+        form: {
+          id: null,
+          username: null,
+          nickname: null,
+          phone: null,
+          gender: null,
+          head: null,
+          remark: null,
+          state: 1,
+          departmentId: null,
+          roleId: null,
+          deleted: null
+        },
+        departmentName: 'xxxxx',
+        updateId: null,
+        departmentOptions: null,
+        roleOptions: null,
+        treeSelectProps: { value: 'id', label: 'name', children: 'children' },
+        treeSelectData: null,
+        rules: {
+          username: [
+            { required: true, message: '请输入用户账号', trigger: 'blur' },
+            { min: 4, max: 16, message: '长度在 4 到 16 个字符', trigger: 'blur' }
+          ],
+          nickname: [
+            { required: true, message: '请输入用户名称', trigger: 'blur' },
+            { min: 2, max: 10, message: '长度在 2 到 10 个字符', trigger: 'blur' }
+          ],
+          phone: [
+            { required: true, message: '请输入手机号码', trigger: 'blur' },
+            { min: 11, max: 11, message: '长度11个字符', trigger: 'blur' }
+          ],
+          departmentId: [
+            { required: true, message: '请选择部门', trigger: 'change' }
+          ],
+          roleId: [
+            { required: true, message: '请选择角色', trigger: 'change' }
+          ],
+          state: [
+            { required: true, message: '请选择状态', trigger: 'change' }
+          ],
+          remark: [
+            { max: 100, message: '长度100个字符', trigger: 'blur' }
+          ]
+        }
+      }
+    },
+    computed: {},
+    created() {
+
+    },
+    mounted() {
+      this.rules = null
+    },
+    methods: {
+      getTreeSelectValue(data, node) {
+        this.form.departmentId = data.id;
+      },
+      setTreeSelectValue(data) {
+        this.$refs.treeSelect.setValue(data.departmentId, data.departmentName)
+      },
+      handle(id) {
+        if (this.isDetail) {
+          this.rules = null;
+          this.dialogTitle = '系统用户详情';
+          this.getUserDetail(id);
+        } else if (this.isAdd) {
+          this.dialogTitle = '新增系统用户';
+          this.getDepartmentTree()
+          this.getRoleList()
+        } else if (this.isUpdate) {
+          this.dialogTitle = '修改系统用户';
+          this.updateId = id;
+          this.getUserDetail(id);
+          this.getDepartmentTree()
+          this.getRoleList()
+        }
+        this.dialogVisible = true
+      },
+      getDepartmentTree() {
+        sysDepartmentApi.getDepartmentTree().then(response => {
+          this.treeSelectData = response.data;
+          this.form.departmentId = 1;
+        });
+      },
+      getRoleList() {
+        sysRoleApi.getList().then(response => {
+          this.roleOptions = response.data;
+          console.log(this.roleOptions)
+        });
+      },
+      submitAddForm() {
+        this.$refs.sysUserForm.validate((valid) => {
+          if (valid) {
+            console.log('submit!')
+            this.addUser()
+            // this.$emit("getList")
+          } else {
+            console.log('error submit!!')
+            return false
+          }
+        });
+      },
+      submitUpdateForm() {
+        this.$refs.sysUserForm.validate((valid) => {
+          if (valid) {
+            console.log('submit!')
+            this.updateUser()
+            // this.$emit("getList")
+          } else {
+            console.log('error submit!!')
+            return false
+          }
+        });
+      },
+      getUserDetail(id) {
+        sysUserApi.detail(id).then(response => {
+          if (response.code === 200) {
+            this.form = response.data;
+            this.setTreeSelectValue(response.data)
+            if (this.isDetail) {
+              this.form.roleId = response.data.roleName
+            }
+          }
+        });
+      },
+      addUser() {
+        console.log(this.form)
+        const addParam = {
+          username: this.form.username,
+          nickname: this.form.nickname,
+          phone: this.form.phone,
+          remark: this.form.remark,
+          state: this.form.state,
+          departmentId: this.form.departmentId,
+          roleId: this.form.roleId
+        }
+        console.log(addParam)
+        sysUserApi.add(addParam).then(response => {
+          if (response.code === 200) {
+            console.log('add response')
+            // {code: 200, msg: "操作成功", success: true, data: null, time: "2020-02-26 11:25:02"}
+            console.log(response)
+            this.restForm();
+            this.$message({
+              message: '保存系统用户成功',
+              type: 'success'
+            })
+            this.$emit('getList')
+          }
+        })
+      },
+      updateUser() {
+        console.log(this.form)
+        const updateParam = {
+          id: this.updateId,
+          nickname: this.form.nickname,
+          phone: this.form.phone,
+          remark: this.form.remark,
+          state: this.form.state,
+          departmentId: this.form.departmentId,
+          roleId: this.form.roleId
+        }
+        console.log(updateParam)
+        sysUserApi.update(updateParam).then(response => {
+          if (response.code === 200) {
+            console.log('update response')
+            // {code: 200, msg: "操作成功", success: true, data: null, time: "2020-02-26 11:25:02"}
+            console.log(response)
+            this.restForm();
+            this.$message({
+              message: '修改系统用户成功',
+              type: 'success'
+            })
+            this.$emit('getList')
+          }
+        })
+      },
+      restForm() {
+        this.$refs.sysUserForm.resetFields()
+        this.dialogVisible = false
+      }
+    }
+  }
+</script>
+
+<style lang="scss">
+  .page-dialog {
+    margin-top: 30px !important;
+    width: 650px;
+  }
+
+  .page-form {
+    /*border: 1px solid red;*/
+    padding: 0px 60px 0px 30px;
+  }
+
+  .page-dialog .el-dialog__body {
+    /*border: 1px solid red !important;*/
+    padding: 20px 20px 20px 20px !important;
+  }
+</style>
+
+
+<style lang="scss" scoped>
+
+</style>

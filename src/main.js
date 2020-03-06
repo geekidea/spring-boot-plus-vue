@@ -30,8 +30,6 @@ import ElTreeSelect from 'el-tree-select';
  * please remove it before going online ! ! !
  */
 if (process.env.NODE_ENV === 'production') {
-  const { mockXHR } = require('../mock')
-  mockXHR()
 }
 
 Vue.use(Element, {

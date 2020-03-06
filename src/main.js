@@ -29,8 +29,9 @@ import ElTreeSelect from 'el-tree-select';
  * Currently MockJs will be used in the production environment,
  * please remove it before going online ! ! !
  */
-if (process.env.NODE_ENV === 'production') {
-}
+// if (process.env.NODE_ENV === 'production') {
+//
+// }
 
 Vue.use(Element, {
   size: Cookies.get('size') || 'medium' // set element-ui default size

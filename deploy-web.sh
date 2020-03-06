@@ -40,7 +40,7 @@ git pull
 
 rm -rf dist
 npm install
-vue-cli-service build
+./node_modules/.bin/vue-cli-service build
 
 cd ..
 if [ ! -d "spring-boot-plus-admin-back" ]; then

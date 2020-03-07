@@ -7,7 +7,7 @@
     :start-placeholder="startPlaceholder"
     :end-placeholder="endPlaceholder"
     :format="format"
-    value-format="yyyy-MM-dd HH:mm:ss"
+    :value-format="format"
     @change="handleChange"
     style="vertical-align: top;"
     :align="align">

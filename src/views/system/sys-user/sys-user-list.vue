@@ -139,7 +139,7 @@
   import sysUserApi from '@/api/system/sys-user-api'
   import waves from '@/directive/waves'
   import Pagination from '@/components/Pagination'
-  import TreeSelect from '@/components/TreeSelect/index'
+  import TreeSelect from '@/components/TreeSelect'
   import DatePickerRange from '@/components/DatePickerRange'
 
   import SysUser from './components/sys-user'

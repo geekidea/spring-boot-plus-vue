@@ -3,6 +3,7 @@ import { MessageBox, Message } from 'element-ui'
 import store from '@/store'
 import { getToken } from '@/utils/auth'
 
+// https://github.com/axios/axios
 // create an axios instance
 const service = axios.create({
   baseURL: process.env.VUE_APP_BASE_API, // url = base url + request url
@@ -69,6 +70,7 @@ service.interceptors.response.use(
         })
       }
       Promise.reject(new Error(res.message || 'Error'))
+      // 当状态码不是200时，是否需要返回响应结果给调用方
       return res
     } else {
       return res

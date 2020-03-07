@@ -45,7 +45,7 @@
       </el-table-column>
       <el-table-column label="头像" width="80px" align="center">
         <template slot-scope="{row}">
-          <img :src="row.head" alt="" style="width: 34px; vertical-align: middle;">
+          <img :src="row.head" alt="" style="width: 34px; max-height: 34px; vertical-align: middle;">
         </template>
       </el-table-column>
       <el-table-column label="账号" min-width="100px" align="center">

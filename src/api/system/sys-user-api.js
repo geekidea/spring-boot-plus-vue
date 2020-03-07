@@ -67,4 +67,17 @@ sysUserApi.delete = id => {
   })
 }
 
+/**
+ * 上传用户头像
+ * @param data
+ * @returns {AxiosPromise}
+ */
+sysUserApi.uploadHead = data => {
+  return request({
+    url: '/sysUser/uploadHead',
+    method: 'post',
+    data
+  })
+}
+
 export default sysUserApi

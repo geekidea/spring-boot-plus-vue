@@ -1,13 +1,15 @@
 <template>
-  <div class="tree-select-container">
+  <div class="tree-select-item">
     <el-select
-      v-model="selectLabel"
-      class="tree-select-item"
-      placeholder="请选择"
+      v-model="selectNodeLabel"
+      class="tree-select"
+      :placeholder="placeholder"
       :disabled="disabled"
+      :clearable="clearable"
       popper-class="select-option"
       :popper-append-to-body="false"
       v-popover:tree-select-popover
+      @clear="handleClear"
       style="width: 100%"></el-select>
     <el-popover
       ref="tree-select-popover"
@@ -67,6 +69,22 @@
       disabled: {
         type: Boolean,
         default: false
+      },
+      selectKey: {
+        type: Number,
+        default: null
+      },
+      selectLabel: {
+        type: String,
+        default: null
+      },
+      placeholder: {
+        type: String,
+        default: "请选择"
+      },
+      clearable: {
+        type: Boolean,
+        default: false
       }
     },
     data() {
@@ -76,7 +94,8 @@
         filterText: '',
         checkedKeys: [1],
         visible: false,
-        selectLabel: null
+        selectNodeKey: null,
+        selectNodeLabel: null
       }
     },
     created() {
@@ -85,6 +104,12 @@
     watch: {
       filterText(val) {
         this.$refs.tree.filter(val);
+      },
+      selectKey() {
+        this.selectNodeKey = this.selectKey
+      },
+      selectLabel() {
+        this.selectNodeLabel = this.selectLabel
       }
     },
     methods: {
@@ -94,21 +119,34 @@
       },
       handleChange(data, node) {
         this.visible = false
-        this.selectLabel = node.label
-        this.$emit('getValue', data, node)
+        this.selectNodeKey = node.key
+        this.selectNodeLabel = node.label
+        this.$emit('update:selectKey', this.selectNodeKey)
+        this.$emit('update:selectLabel', this.selectNodeLabel)
+        this.$emit('change', data, node)
       },
-      setValue(id, name) {
-        this.selectLabel = name
+      handleClear() {
+        this.visible = false
+        this.selectNodeKey = null
+        this.selectNodeLabel = null
+        this.filterText = null
+        this.$emit('update:selectKey', null)
+        this.$emit('update:selectLabel', null)
+        this.$emit('change', null, null)
+      },
+      setValue(key, label) {
+        this.selectNodeKey = key
+        this.selectNodeLabel = label
       }
     }
   }
 </script>
 
 <style>
-  .tree-select-container {
+  .tree-select-item {
 
   }
-  .tree-select-container .select-option{
+  .tree-select-item .select-option{
     display: none !important;
   }
 

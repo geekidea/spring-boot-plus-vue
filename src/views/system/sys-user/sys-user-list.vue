@@ -1,27 +1,24 @@
 <template>
   <div id="sys-user-list" class="app-container">
     <div class="filter-container">
-      <el-select v-model="listQuery.departmentId" placeholder="部门名称" @change="handleFilter" clearable class="filter-item" style="width: 120px">
-        <el-option v-for="item in departmentOptions" :key="item.id" :label="item.name" :value="item.id"/>
-      </el-select>
+      <tree-select
+        :data="treeSelectData"
+        placeholder="部门名称"
+        clearable
+        :select-key.sync="listQuery.departmentId"
+        @change="handleFilter"/>
       <el-select v-model="listQuery.roleId" placeholder="角色名称" @change="handleFilter" clearable class="filter-item" style="width: 120px">
         <el-option v-for="item in roleOptions" :key="item.id" :label="item.name" :value="item.id"/>
       </el-select>
       <el-select v-model="listQuery.state" placeholder="状态" @change="handleFilter" clearable class="filter-item" style="width: 120px">
         <el-option v-for="item in stateOptions" :key="item.value" :label="item.label" :value="item.value"/>
       </el-select>
-      <el-date-picker
-        v-model="createTimeRange"
-        type="daterange"
-        :picker-options="pickerOptions"
-        range-separator="至"
-        start-placeholder="开始日期"
-        end-placeholder="结束日期"
-        value-format="yyyy-MM-dd"
+      <date-picker-range
+        :date-range.sync="createTimeRange"
+        :start-date.sync="listQuery.createTimeStart"
+        :end-date.sync="listQuery.createTimeEnd"
         @change="handleCreateTimeFilter"
-        style="vertical-align: top;"
-        align="center">
-      </el-date-picker>
+      />
       <br/>
       <el-input placeholder="请输入关键字进行查询" clearable v-model="searchValue" class="input-with-select" @clear="handleClear" @keyup.enter.native="handleFilter()">
         <el-select v-model="searchColumn" slot="prepend" placeholder="请选择">
@@ -127,12 +124,7 @@
       </el-table-column>
     </el-table>
 
-    <pagination
-      v-show="total>0"
-      :total="total"
-      :page.sync="listQuery.pageIndex"
-      :limit.sync="listQuery.pageSize"
-      @pagination="getList"/>
+    <pagination v-show="total>0" :total="total" :page.sync="listQuery.pageIndex" :limit.sync="listQuery.pageSize" @pagination="getList"/>
 
     <sys-user is-detail ref="detailPage"/>
     <sys-user is-add ref="addPage" @getList="handleFilter"/>
@@ -147,10 +139,13 @@
   import sysUserApi from '@/api/system/sys-user-api'
   import waves from '@/directive/waves'
   import Pagination from '@/components/Pagination'
+  import TreeSelect from '@/components/TreeSelect/index'
+  import DatePickerRange from '@/components/DatePickerRange'
 
   import SysUser from './components/sys-user'
   import SysUserHead from './components/sys-user-head'
   import SysUserPassword from './components/sys-user-password'
+
   import sysDepartmentApi from '@/api/system/sys-department-api'
   import sysRoleApi from '@/api/system/sys-role-api'
 
@@ -169,7 +164,7 @@
 
   export default {
     name: 'SysUserList',
-    components: { SysUserPassword, SysUserHead, SysUser, Pagination },
+    components: { DatePickerRange, TreeSelect, SysUserPassword, SysUserHead, SysUser, Pagination },
     directives: { waves },
     filters: {
       stateClassFilter(state) {
@@ -203,7 +198,7 @@
             asc: this.sortAsc
           }]
         },
-        departmentOptions: [],
+        treeSelectData: null,
         roleOptions: [],
         stateOptions,
         tableColumnChecked: null,
@@ -211,40 +206,13 @@
         searchValue: null,
         searchOptions,
         createTimeRange: null,
-        pickerOptions: {
-          shortcuts: [{
-            text: '最近一周',
-            onClick(picker) {
-              const end = new Date()
-              const start = new Date()
-              start.setTime(start.getTime() - 3600 * 1000 * 24 * 7)
-              picker.$emit('pick', [start, end])
-            }
-          }, {
-            text: '最近一个月',
-            onClick(picker) {
-              const end = new Date()
-              const start = new Date()
-              start.setTime(start.getTime() - 3600 * 1000 * 24 * 30)
-              picker.$emit('pick', [start, end])
-            }
-          }, {
-            text: '最近三个月',
-            onClick(picker) {
-              const end = new Date()
-              const start = new Date()
-              start.setTime(start.getTime() - 3600 * 1000 * 24 * 90)
-              picker.$emit('pick', [start, end])
-            }
-          }]
-        },
         showReviewer: true,
         downloadLoading: false
       }
     },
     created() {
       this.getList()
-      this.getDepartmentList()
+      this.getDepartmentTree()
       this.getRoleList()
     },
     methods: {
@@ -256,9 +224,9 @@
           this.listLoading = false
         });
       },
-      getDepartmentList() {
-        sysDepartmentApi.getList().then(response => {
-          this.departmentOptions = response.data;
+      getDepartmentTree() {
+        sysDepartmentApi.getDepartmentTree().then(response => {
+          this.treeSelectData = response.data;
         });
       },
       getRoleList() {
@@ -275,13 +243,6 @@
         this.getList()
       },
       handleCreateTimeFilter() {
-        if (this.createTimeRange) {
-          this.listQuery.createTimeStart = this.createTimeRange[0];
-          this.listQuery.createTimeEnd = this.createTimeRange[1];
-        } else {
-          this.listQuery.createTimeStart = null
-          this.listQuery.createTimeEnd = null
-        }
         this.handleFilter();
       },
       handleClear() {
@@ -359,6 +320,13 @@
 
   #sys-user-list .filter-container {
     padding-bottom: 10px;
+  }
+
+  #sys-user-list .filter-container .tree-select-item{
+    width: 120px;
+    display: inline-block;
+    vertical-align: top;
+    margin-right: 4px;
   }
 
   #sys-user-list .input-with-select {

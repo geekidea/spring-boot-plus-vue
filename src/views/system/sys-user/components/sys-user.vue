@@ -27,10 +27,10 @@
       </el-form-item>
       <el-form-item label="部门" prop="departmentId">
         <tree-select
-          ref="treeSelect"
           :data="treeSelectData"
           :disabled="isDetail"
-          @getValue="getTreeSelectValue"
+          :select-key.sync="form.departmentId"
+          :select-label.sync="departmentName"
         />
       </el-form-item>
       <el-form-item label="角色" prop="roleId">
@@ -106,11 +106,10 @@
           roleId: null,
           deleted: null
         },
-        departmentName: 'xxxxx',
+        departmentName: null,
         updateId: null,
         departmentOptions: null,
         roleOptions: null,
-        treeSelectProps: { value: 'id', label: 'name', children: 'children' },
         treeSelectData: null,
         rules: {
           username: [
@@ -148,12 +147,6 @@
 
     },
     methods: {
-      getTreeSelectValue(data, node) {
-        this.form.departmentId = data.id;
-      },
-      setTreeSelectValue(data) {
-        this.$refs.treeSelect.setValue(data.departmentId, data.departmentName)
-      },
       handle(id) {
         if (this.isDetail) {
           this.rules = null;
@@ -175,7 +168,6 @@
       getDepartmentTree() {
         sysDepartmentApi.getDepartmentTree().then(response => {
           this.treeSelectData = response.data;
-          this.form.departmentId = 1;
         });
       },
       getRoleList() {
@@ -185,6 +177,9 @@
         });
       },
       submitAddForm() {
+        console.log("form...")
+        console.log(this.form.departmentId)
+        console.log(this.departmentName)
         this.$refs.sysUserForm.validate((valid) => {
           if (valid) {
             console.log('submit!')
@@ -212,10 +207,10 @@
         sysUserApi.detail(id).then(response => {
           if (response.code === 200) {
             this.form = response.data;
-            this.setTreeSelectValue(response.data)
             if (this.isDetail) {
               this.form.roleId = response.data.roleName
             }
+            this.departmentName = response.data.departmentName
           }
         });
       },

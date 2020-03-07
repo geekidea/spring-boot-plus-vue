@@ -2,7 +2,7 @@
   <el-dialog
     title="重置密码"
     :visible.sync="dialogVisible"
-    custom-class="page-dialog"
+    custom-class="page-dialog sys-user-password-dialog"
   >
     <el-form
       ref="sysUserPasswordForm"
@@ -109,23 +109,8 @@
 </script>
 
 <style lang="scss">
-  .page-dialog {
+  .sys-user-password-dialog {
     margin-top: 150px !important;
-    width: 650px;
-  }
-
-  .page-form {
-    /*border: 1px solid red;*/
-    padding: 0px 60px 0px 30px;
-  }
-
-  .page-dialog .el-dialog__body {
-    /*border: 1px solid red !important;*/
-    padding: 20px 20px 20px 20px !important;
   }
 </style>
 
-
-<style lang="scss" scoped>
-
-</style>

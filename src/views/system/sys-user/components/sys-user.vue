@@ -1,9 +1,8 @@
 <template>
-  <!--    <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">-->
   <el-dialog
     :title="dialogTitle"
     :visible.sync="dialogVisible"
-    custom-class="page-dialog"
+    custom-class="page-dialog sys-user-dialog"
   >
     <el-form
       ref="sysUserForm"
@@ -146,7 +145,7 @@
 
     },
     mounted() {
-      this.rules = null
+
     },
     methods: {
       getTreeSelectValue(data, node) {
@@ -281,22 +280,10 @@
 </script>
 
 <style lang="scss">
-  .page-dialog {
-    margin-top: 30px !important;
-    width: 650px;
-  }
-
-  .page-form {
-    /*border: 1px solid red;*/
-    padding: 0px 60px 0px 30px;
-  }
-
-  .page-dialog .el-dialog__body {
-    /*border: 1px solid red !important;*/
-    padding: 20px 20px 20px 20px !important;
+  .sys-user-dialog {
+    margin-top: 40px !important;
   }
 </style>
-
 
 <style lang="scss" scoped>
 

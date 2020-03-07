@@ -201,3 +201,27 @@ aside {
 .multiselect--active {
   z-index: 1000 !important;
 }
+
+.page-dialog{
+
+}
+
+.page-dialog {
+  min-width: 360px;
+  max-width: 600px;
+}
+
+.page-dialog .el-dialog__body {
+  border: 0px solid red;
+  padding: 20px 20px 10px 20px !important;
+}
+
+.page-dialog .page-form {
+  border: 0px solid red;
+  padding: 0px 35px 0px 30px;
+}
+
+.page-dialog .page-form .el-form-item__label{
+  border: 0px solid blue;
+}
+

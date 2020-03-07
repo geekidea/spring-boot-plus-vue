@@ -2,7 +2,7 @@
     <el-dialog
       :title="dialogTitle"
       :visible.sync="dialogVisible"
-      custom-class="page-dialog menu-dialog"
+      custom-class="page-dialog sys-menu-dialog"
     >
       <el-form
         ref="sysMenuForm"
@@ -390,32 +390,8 @@
 </script>
 
 <style lang="scss">
-  .page-dialog {
-    margin-top: 30px !important;
-    width: 650px;
-  }
-
-  .page-form {
-    /*border: 1px solid red;*/
-    padding: 0px 60px 0px 30px;
-  }
-
-  .page-dialog .el-dialog__body {
-    /*border: 1px solid red !important;*/
-    /*padding: 20px 20px 20px 20px !important;*/
-  }
-
-
-
-
-  .menu-dialog{
-    margin-top: 10px !important;
-    width: 650px;
-    /*border: 1px solid red;*/
-  }
-  .menu-dialog .el-dialog__body {
-    /*border: 1px solid red !important;*/
-    padding: 30px 20px 20px 20px !important;
+  .sys-menu-dialog{
+    margin-top: 20px !important;
   }
 
   .menu-icon-container{
@@ -457,9 +433,4 @@
     color: #1890ff;
     font-size: 25px;
   }
-</style>
-
-
-<style lang="scss" scoped>
-
 </style>

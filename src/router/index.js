@@ -106,7 +106,7 @@ export const constantRoutes = [
     component: Layout,
     children: [
       {
-        path: 'http://47.105.159.10/api',
+        path: 'http://47.105.159.10:8888/api/instances/445767438708/details',
         meta: { title: 'SpringBootAdmin', icon: 'link' }
       }
     ]

@@ -2,7 +2,7 @@
   <el-dialog
     :title="dialogTitle"
     :visible.sync="dialogVisible"
-    custom-class="page-dialog role-dialog"
+    custom-class="page-dialog sys-role-dialog"
   >
     <el-form
       ref="sysRoleForm"
@@ -205,36 +205,10 @@
 </script>
 
 <style lang="scss">
-  .page-dialog {
-    margin-top: 30px !important;
-    width: 650px;
+  .sys-role-dialog{
+    margin-top: 130px !important;
   }
-
-  .page-form {
-    /*border: 1px solid red;*/
-    padding: 0px 60px 0px 30px;
-  }
-
-  .page-dialog .el-dialog__body {
-    /*border: 1px solid red !important;*/
-    /*padding: 20px 20px 20px 20px !important;*/
-  }
-
-
-
-
-  .role-dialog{
-    margin-top: 100px !important;
-    width: 650px;
-    /*border: 1px solid red;*/
-  }
-  .role-dialog .el-dialog__body {
-    /*border: 1px solid red !important;*/
-    /*padding: 30px 20px 20px 20px !important;*/
-  }
-
 </style>
-
 
 <style lang="scss" scoped>
 

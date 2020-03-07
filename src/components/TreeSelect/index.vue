@@ -1,7 +1,6 @@
 <template>
   <div class="tree-select-container">
     <el-select
-      slot="reference"
       v-model="selectLabel"
       class="tree-select-item"
       placeholder="请选择"

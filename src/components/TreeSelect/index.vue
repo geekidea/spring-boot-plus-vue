@@ -153,7 +153,7 @@
   .tree-select-popper{
     /*border: 1px solid red;*/
     /*width: 100% !important;*/
-    width: 300px !important;
+    width: 200px !important;
   }
   .tree-select-filter-input{
     margin-bottom: 6px;

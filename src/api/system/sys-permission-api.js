@@ -52,5 +52,43 @@ sysPermissionApi.getNavMenuTree = () => {
   })
 }
 
+/**
+ * 添加菜单
+ * @param data
+ * @returns {AxiosPromise}
+ */
+sysPermissionApi.add = data => {
+  return request({
+    url: '/sysPermission/add',
+    method: 'post',
+    data
+  })
+}
+
+/**
+ * 修改菜单
+ * @param data
+ * @returns {AxiosPromise}
+ */
+sysPermissionApi.update = data => {
+  return request({
+    url: '/sysPermission/update',
+    method: 'post',
+    data
+  })
+}
+
+/**
+ * 删除菜单
+ * @param data
+ * @returns {AxiosPromise}
+ */
+sysPermissionApi.delete = id => {
+  return request({
+    url: '/sysPermission/delete' + id,
+    method: 'post'
+  })
+}
+
 export default sysPermissionApi
 

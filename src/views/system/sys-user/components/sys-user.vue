@@ -69,7 +69,7 @@
   import sysUserApi from '@/api/system/sys-user-api'
   import sysDepartmentApi from '@/api/system/sys-department-api'
   import sysRoleApi from '@/api/system/sys-role-api'
-  import TreeSelect from '@/components/TreeSelect/index'
+  import TreeSelect from '@/components/TreeSelect'
 
   export default {
     name: 'SysUser',
@@ -232,7 +232,7 @@
               message: '保存系统用户成功',
               type: 'success'
             })
-            this.$emit('getList')
+            this.$emit('change')
           }
         })
       },
@@ -253,7 +253,7 @@
               message: '修改系统用户成功',
               type: 'success'
             })
-            this.$emit('getList')
+            this.$emit('change')
           }
         })
       },

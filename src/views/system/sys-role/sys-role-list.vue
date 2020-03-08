@@ -117,8 +117,8 @@
       @pagination="getList"/>
 
     <sys-role is-detail ref="detailPage"></sys-role>
-    <sys-role is-add ref="addPage" @getList="getList"></sys-role>
-    <sys-role is-update ref="updatePage" @getList="getList"></sys-role>
+    <sys-role is-add ref="addPage" @change="getList"></sys-role>
+    <sys-role is-update ref="updatePage" @change="getList"></sys-role>
 
   </div>
 </template>

@@ -4,7 +4,6 @@
       <el-button type="primary" @click="handleExpandAll">折叠/展开</el-button>
       <el-button type="primary" icon="el-icon-edit" @click="handleAdd" style="margin-left: 10px; width: 92px;">添加</el-button>
     </div>
-
     <el-table
       :data="tableData"
       type="selection"
@@ -73,30 +72,30 @@
 
       <el-table-column label="操作" align="center" width="160" class-name="operation">
         <template slot-scope="{row}">
-          <el-link type="primary" @click="handDetail(row.id)">详情</el-link>
-          <el-link type="warning" @click="handUpdate(row.id)">修改</el-link>
-          <el-link type="danger" @click="handleDelete(row.id, row.username)">删除</el-link>
+          <div class="operation-area" @click.stop>
+            <el-link type="primary" @click="handDetail(row.id)">详情</el-link>
+            <el-link type="warning" @click="handUpdate(row.id)">修改</el-link>
+            <el-link type="danger" @click="handleDelete(row.id, row.username)">删除</el-link>
+          </div>
         </template>
       </el-table-column>
     </el-table>
 
     <sys-menu is-detail ref="detailPage"></sys-menu>
-    <sys-menu is-add ref="addPage"></sys-menu>
-    <sys-menu is-update ref="updatePage"></sys-menu>
+    <sys-menu is-add ref="addPage" @change="getList"></sys-menu>
+    <sys-menu is-update ref="updatePage" @change="getList"></sys-menu>
 
   </div>
 </template>
 
 <script>
-  import waves from '@/directive/waves' // waves directive
-
   import sysPermissionApi from '@/api/system/sys-permission-api.js'
   import SysMenu from './components/sys-menu'
 
   export default {
     name: 'SysMenuList',
     components: { SysMenu },
-    directives: { waves },
+    directives: {  },
     filters: {
       typeFilter(type) {
         if (type === 1) {
@@ -117,55 +116,12 @@
       return {
         expandAll: true,
         expandRow: {},
-        // 获取row的key值
-        getRowKeys(row) {
-          return row.id;
-        },
-        // 要展开的行，数值的元素是row的key值
-        expands: [],
-        tableData: null,
+        tableData: [],
         tableRowData: [],
         tableKey: 0,
         list: null,
         total: 0,
-        listLoading: true,
-        listQuery: {
-          pageIndex: 1,
-          pageSize: 10,
-          keyword: null,
-          username: null,
-          nickname: null,
-          roleId: null,
-          state: null,
-          createTimeStart: null,
-          createTimeEnd: null,
-          pageSorts: [{
-            column: 'id',
-            asc: false
-          }]
-        },
-        stateOptions: [
-          { label: '启用', value: 1 },
-          { label: '禁用', value: 0 }
-        ],
-        tableColumnChecked: null,
-        searchColumn: 'keyword',
-        searchValue: null,
-        searchOptions: [
-          { label: '全部', value: 'keyword' },
-          { label: '角色名称', value: 'name' },
-          { label: '角色编码', value: 'code' }
-        ],
-        createTimeRange: null,
-        showReviewer: true,
-        dialogStatus: '',
-        textMap: {
-          update: 'Edit',
-          create: 'Create'
-        },
-        dialogPvVisible: false,
-        pvData: [],
-        downloadLoading: false
+        listLoading: true
       }
     },
     created() {
@@ -175,6 +131,7 @@
       handleExpandAll() {
         // 如果当前是展开，则设置为折叠，反之亦然
         this.expandAll = !this.expandAll
+        this.expandRow = {}
         if (this.tableRowData) {
           this.tableRowData.forEach(row => {
             this.$refs.menuTable.toggleRowExpansion(row, this.expandAll)
@@ -196,90 +153,26 @@
                 })
               }
             })
-            console.log(this.tableRowData)
           }
         })
       },
       handleRowClick(row, column, event) {
-        // const expandState = this.expandRow[row.id];
-        // if (expandState === undefined) {
-        //   this.expandRow[row.id] = !this.expandAll;
-        // } else {
-        //   this.expandRow[row.id] = !expandState;
-        // }
-        // this.$refs.menuTable.toggleRowExpansion(row, this.expandRow[row.id]);
+        const expandState = this.expandRow[row.id];
+        if (expandState === undefined) {
+          this.expandRow[row.id] = !this.expandAll;
+        } else if (expandState) {
+          this.expandRow[row.id] = false
+        } else {
+          this.expandRow[row.id] = true;
+        }
+        this.$refs.menuTable.toggleRowExpansion(row, this.expandRow[row.id]);
       },
       handleFilter() {
-        // this.$refs.sysUserAdd.showxxx(666);
-        this.listQuery.pageIndex = 1
-        console.log('search...')
-        console.log(this.listQuery)
-        console.log(this.searchColumn)
-        console.log(this.searchValue)
-        this.listQuery.keyword = null
-        this.listQuery.username = null
-        this.listQuery.nickname = null
-        this.listQuery[this.searchColumn] = this.searchValue
         this.getList()
       },
-      handleCreateTimeFilter() {
-        console.log(this.createTimeRange)
-        if (this.createTimeRange) {
-          this.listQuery.createTimeStart = this.createTimeRange[0]
-          this.listQuery.createTimeEnd = this.createTimeRange[1]
-          console.log(this.listQuery.createTimeStart)
-          console.log(this.listQuery.createTimeEnd)
-          this.handleFilter()
-        }
-      },
-      handleModifyStatus(row, status) {
-        this.$message({
-          message: '操作Success',
-          type: 'success'
-        })
-        row.status = status
-      },
-      sortChange(data) {
-        const { prop, order } = data
-        if (prop === 'id') {
-          this.sortByID(order)
-        } else if (prop === 'createTime') {
-          this.sortByCreateTime(order)
-        }
-      },
-      sortByID(order) {
-        if (order === 'ascending') {
-          this.listQuery.pageSorts = [{
-            column: 'id',
-            asc: true
-          }]
-        } else {
-          this.listQuery.pageSorts = [{
-            column: 'id',
-            asc: false
-          }]
-        }
-        this.handleFilter()
-      },
-      sortByCreateTime(order) {
-        if (order === 'ascending') {
-          this.listQuery.pageSorts = [{
-            column: 'create_time',
-            asc: true
-          }]
-        } else {
-          this.listQuery.pageSorts = [{
-            column: 'create_time',
-            asc: false
-          }]
-        }
-        this.handleFilter()
-      },
       handleAdd(event) {
-        this.dialogStatus = 'create'
         this.$nextTick(() => {
           this.$refs.addPage.handle()
-          // this.$refs['dataForm'].clearValidate()
         })
       },
       handDetail(id) {
@@ -302,16 +195,7 @@
             type: 'success',
             message: '删除成功!'
           })
-        }).catch(() => {
-          this.$message({
-            type: 'info',
-            message: '已取消删除'
-          })
         })
-      },
-      getSortClass: function(key) {
-        const sort = this.listQuery.sort
-        return sort === `+${key}` ? 'ascending' : 'descending'
       }
     }
   }
@@ -327,38 +211,26 @@
 
   #sys-menu-list .el-table td {
     padding: 8px 0px;
-    /*border: 1px solid red;*/
-  }
-
-  #sys-menu-list .filter-container {
-    /*border: 1px solid red;*/
-    /*padding-bottom: 10px;*/
-  }
-
-  #sys-menu-list .input-with-select {
-    /*border: 1px solid red;*/
-    /*vertical-align: top;*/
-    width: 505px;
-    margin-right: 4px;
-  }
-
-  #sys-menu-list .input-with-select .el-select .el-input {
-    width: 120px;
-  }
-
-  .input-with-select .el-input-group__prepend {
-    background-color: #fff;
   }
 
   #sys-menu-list .filter-item {
     margin-right: 4px;
-    /*border: 1px solid red;*/
     vertical-align: baseline;
   }
 
+  #sys-menu-list .el-table__body .operation {
+    padding: 0px;
+  }
+
   #sys-menu-list .el-table__body .operation .cell {
-    /*border: 1px solid blue;*/
     text-align: center;
+    padding: 0px;
+  }
+
+  #sys-menu-list .el-table__body .operation .cell .operation-area{
+    text-align: center;
+    padding: 8px 0px;
+    margin: 0px;
   }
 
   #sys-menu-list .el-table__row--level-1 .menu-name .cell {

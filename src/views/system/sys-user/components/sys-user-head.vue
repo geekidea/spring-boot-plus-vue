@@ -130,7 +130,7 @@
                 type: 'success'
               })
               this.resetForm()
-              this.$emit('getList')
+              this.$emit('change')
             }
           })
         })

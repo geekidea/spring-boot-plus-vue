@@ -127,9 +127,9 @@
     <pagination v-show="total>0" :total="total" :page.sync="listQuery.pageIndex" :limit.sync="listQuery.pageSize" @pagination="getList"/>
 
     <sys-user is-detail ref="detailPage"/>
-    <sys-user is-add ref="addPage" @getList="handleFilter"/>
-    <sys-user is-update ref="updatePage" @getList="getList"/>
-    <sys-user-head ref="headUploadPage" @getList="getList"/>
+    <sys-user is-add ref="addPage" @change="handleFilter"/>
+    <sys-user is-update ref="updatePage" @change="getList"/>
+    <sys-user-head ref="headUploadPage" @change="getList"/>
     <sys-user-password ref="resetPasswordPage"/>
 
   </div>

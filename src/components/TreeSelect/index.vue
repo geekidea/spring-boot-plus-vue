@@ -95,10 +95,15 @@
         checkedKeys: [1],
         visible: false,
         selectNodeKey: null,
-        selectNodeLabel: null
+        selectNodeLabel: null,
+        currentNode: null,
+        currentData: null
       }
     },
     created() {
+
+    },
+    mounted() {
 
     },
     watch: {
@@ -110,6 +115,12 @@
       },
       selectLabel() {
         this.selectNodeLabel = this.selectLabel
+      },
+      selectNode() {
+        this.currentNode = this.selectNode
+      },
+      selectData() {
+        this.currentData = this.selectData
       }
     },
     methods: {
@@ -121,22 +132,38 @@
         this.visible = false
         this.selectNodeKey = node.key
         this.selectNodeLabel = node.label
-        this.$emit('update:selectKey', this.selectNodeKey)
-        this.$emit('update:selectLabel', this.selectNodeLabel)
-        this.$emit('change', data, node)
+        this.currentNode = node
+        this.currentData = node.data
+        this.updateParentData(data, node)
       },
       handleClear() {
         this.visible = false
         this.selectNodeKey = null
         this.selectNodeLabel = null
+        this.currentNode = null
+        this.currentData = null
         this.filterText = null
-        this.$emit('update:selectKey', null)
-        this.$emit('update:selectLabel', null)
-        this.$emit('change', null, null)
+        this.updateParentData(null, null)
+      },
+      updateParentData(data, node) {
+        this.$emit('update:selectKey', this.selectNodeKey)
+        this.$emit('update:selectLabel', this.selectNodeLabel)
+        this.$emit('update:selectNode', this.currentNode)
+        this.$emit('update:selectData', this.currentData)
+        this.$emit('change', data, node)
       },
       setValue(key, label) {
         this.selectNodeKey = key
         this.selectNodeLabel = label
+      },
+      getNode(key) {
+        if (key) {
+          this.$refs.tree.setCurrentKey(key)
+          const node = this.$refs.tree.getNode(key)
+          this.selectNodeLabel = node.label
+          this.currentNode = node
+          this.currentData = node.data
+        }
       }
     }
   }
@@ -151,8 +178,6 @@
   }
 
   .tree-select-popper{
-    /*border: 1px solid red;*/
-    /*width: 100% !important;*/
     width: 200px !important;
   }
   .tree-select-filter-input{

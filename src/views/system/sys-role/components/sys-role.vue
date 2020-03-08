@@ -161,7 +161,7 @@
               message: '保存系统角色成功',
               type: 'success'
             })
-            this.$emit('getList')
+            this.$emit('change')
           }
         })
       },
@@ -180,7 +180,7 @@
               message: '修改系统角色成功',
               type: 'success'
             })
-            this.$emit('getList')
+            this.$emit('change')
           }
         })
       },

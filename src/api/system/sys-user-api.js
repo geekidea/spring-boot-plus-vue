@@ -80,4 +80,17 @@ sysUserApi.uploadHead = data => {
   })
 }
 
+/**
+ * 管理员重置用户密码
+ * @param data
+ * @returns {AxiosPromise}
+ */
+sysUserApi.resetPassword = data => {
+  return request({
+    url: '/sysUser/resetPassword',
+    method: 'post',
+    data
+  })
+}
+
 export default sysUserApi

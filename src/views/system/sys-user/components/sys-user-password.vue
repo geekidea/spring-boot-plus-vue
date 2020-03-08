@@ -13,8 +13,8 @@
       class="page-form"
       style="width: 100%;">
 
-      <el-form-item label="新密码" prop="password">
-        <el-input v-model="form.password" placeholder="请输入密码" clearable autocomplete="off" show-password/>
+      <el-form-item label="新密码" prop="newPassword">
+        <el-input v-model="form.newPassword" placeholder="请输入新密码" clearable autocomplete="off" show-password/>
       </el-form-item>
       <el-form-item label="确认新密码" prop="confirmPassword">
         <el-input v-model="form.confirmPassword" placeholder="请输入确认密码" clearable autocomplete="off" show-password/>
@@ -34,21 +34,40 @@
   export default {
     name: 'SysUserPassword',
     data() {
+      const validPassword = (rule, value, callback) => {
+        const reg = /^[0-9a-zA-Z_]{6,16}$/
+        if (!reg.test(value)) {
+          callback(new Error('密码只能输入字母数字下划线'))
+        } else {
+          callback()
+        }
+      };
+      const validConfirmPassword = (rule, value, callback) => {
+        if (this.form.newPassword !== value) {
+          callback(new Error('两次输入的密码不一致'))
+        } else {
+          callback()
+        }
+      };
+
       return {
         dialogVisible: false,
         form: {
-          password: null,
+          newPassword: null,
           confirmPassword: null
         },
         updateId: null,
         rules: {
-          password: [
+          newPassword: [
             { required: true, message: '请输入新密码', trigger: 'blur' },
-            { min: 6, max: 16, message: '长度在 6 到 16 个字符', trigger: 'blur' }
+            { min: 6, max: 16, message: '长度在 6 到 16 个字符', trigger: 'blur' },
+            { validator: validPassword, trigger: 'blur' }
           ],
           confirmPassword: [
             { required: true, message: '请输入确认新密码', trigger: 'blur' },
-            { min: 6, max: 16, message: '长度在 6 到 16 个字符', trigger: 'blur' }
+            { min: 6, max: 16, message: '长度在 6 到 16 个字符', trigger: 'blur' },
+            { validator: validPassword, trigger: 'blur' },
+            { validator: validConfirmPassword, trigger: 'blur' }
           ]
         }
       }
@@ -66,37 +85,26 @@
         this.$refs.sysUserPasswordForm.validate((valid) => {
           if (valid) {
             console.log('submit!')
-            this.addUser()
-            // this.$emit("getList")
+            this.resetPassword()
           } else {
             console.log('error submit!!')
             return false
           }
         });
       },
-      updateUser() {
-        console.log(this.form)
+      resetPassword() {
         const updateParam = {
-          id: this.updateId,
-          nickname: this.form.nickname,
-          phone: this.form.phone,
-          remark: this.form.remark,
-          state: this.form.state,
-          departmentId: this.form.departmentId,
-          roleId: this.form.roleId
+          userId: this.updateId,
+          newPassword: this.form.newPassword,
+          confirmPassword: this.form.confirmPassword
         }
-        console.log(updateParam)
-        sysUserApi.update(updateParam).then(response => {
+        sysUserApi.resetPassword(updateParam).then(response => {
           if (response.code === 200) {
-            console.log('update response')
-            // {code: 200, msg: "操作成功", success: true, data: null, time: "2020-02-26 11:25:02"}
-            console.log(response)
             this.restForm();
             this.$message({
-              message: '修改系统用户成功',
+              message: '重置密码成功',
               type: 'success'
             })
-            this.$emit('getList')
           }
         })
       },

@@ -14,7 +14,7 @@
       style="width: 100%;">
 
       <el-form-item label="角色名称" prop="name">
-        <el-input v-model="form.name" :readonly="!isAdd"/>
+        <el-input v-model="form.name" :readonly="isDetail"/>
       </el-form-item>
       <el-form-item label="角色编码" prop="code">
         <el-input v-model="form.code"  :readonly="isDetail"/>
@@ -23,7 +23,6 @@
         <el-radio-group v-model="form.state" :disabled="isDetail">
           <el-radio :label="1">启用</el-radio>
           <el-radio :label="0">禁用</el-radio>
-          <el-radio :label="2">锁定</el-radio>
         </el-radio-group>
       </el-form-item>
       <el-form-item label="备注" prop="remark">
@@ -148,7 +147,6 @@
         });
       },
       addRole() {
-        console.log(this.form)
         const addParam = {
           name: this.form.name,
           code: this.form.code,
@@ -158,9 +156,6 @@
         console.log(addParam)
         sysRoleApi.add(addParam).then(response => {
           if (response.code === 200) {
-            console.log('add response')
-            // {code: 200, msg: "操作成功", success: true, data: null, time: "2020-02-26 11:25:02"}
-            console.log(response)
             this.restForm();
             this.$message({
               message: '保存系统角色成功',
@@ -171,22 +166,15 @@
         })
       },
       updateRole() {
-        console.log(this.form)
         const updateParam = {
           id: this.updateId,
-          nickname: this.form.nickname,
-          phone: this.form.phone,
+          name: this.form.name,
+          code: this.form.code,
           remark: this.form.remark,
-          state: this.form.state,
-          departmentId: this.form.departmentId,
-          roleId: this.form.roleId
+          state: this.form.state
         }
-        console.log(updateParam)
         sysRoleApi.update(updateParam).then(response => {
           if (response.code === 200) {
-            console.log('update response')
-            // {code: 200, msg: "操作成功", success: true, data: null, time: "2020-02-26 11:25:02"}
-            console.log(response)
             this.restForm();
             this.$message({
               message: '修改系统角色成功',

@@ -208,11 +208,7 @@
       }
     },
     created() {
-      // 设置默认排序
-      this.listQuery.pageSorts = [{
-        column: this.sortColumn,
-        asc: this.sortAsc
-      }]
+      this.setDefaultSort()
       this.getList()
       this.getDepartmentTree()
       this.getRoleList()
@@ -249,6 +245,13 @@
       },
       handleClear() {
         this.handleFilter()
+      },
+      setDefaultSort() {
+        // 设置默认排序
+        this.listQuery.pageSorts = [{
+          column: this.sortColumn,
+          asc: this.sortAsc
+        }]
       },
       sortChange(data) {
         const { prop, order } = data

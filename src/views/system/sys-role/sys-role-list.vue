@@ -19,7 +19,8 @@
         </el-select>
       </el-input>
       <el-button v-waves type="primary" icon="el-icon-search" @click="handleFilter" style="width: 115px;">搜索</el-button>
-      <el-button type="primary" icon="el-icon-edit" @click="handleAdd" style="margin-left: 10px; width: 92px;">添加</el-button>
+      <el-button type="primary" icon="el-icon-edit" @click="handleAdd" style="margin-left: 10px; width: 92px;">添加
+      </el-button>
     </div>
 
     <el-table
@@ -32,7 +33,8 @@
       style="width: 100%;"
       @sort-change="sortChange"
     >
-      <el-table-column label="编号" prop="id" sortable="custom" align="center" width="80px" :class-name="getSortClass('id')">
+      <el-table-column label="编号" prop="id" sortable="custom" align="center" width="80px"
+                       :class-name="getSortClass('id')">
         <template slot-scope="{row}">
           <span>{{ row.id }}</span>
         </template>
@@ -102,7 +104,7 @@
           </router-link>
 
           <el-link type="warning" @click="handUpdate(row.id)">修改</el-link>
-          <el-link type="danger" @click="handleDelete(row.id, row.username)">删除</el-link>
+          <el-link type="danger" @click="handleDelete(row.id, row.name)">删除</el-link>
         </template>
       </el-table-column>
     </el-table>
@@ -122,12 +124,12 @@
 </template>
 
 <script>
-  import sysRoleApi from '@/api/system/sys-role-api'
-  import waves from '@/directive/waves' // waves directive
-  import { parseTime } from '@/utils'
-  import Pagination from '@/components/Pagination' // secondary package based on el-pagination
+  import waves from '@/directive/waves'
+  import Pagination from '@/components/Pagination'
 
   import SysRole from './components/sys-role'
+
+  import sysRoleApi from '@/api/system/sys-role-api'
 
   export default {
     name: 'SysRoleList',
@@ -150,20 +152,16 @@
         list: null,
         total: 0,
         listLoading: true,
+        sortColumn: 'id',
+        sortAsc: false,
         listQuery: {
           pageIndex: 1,
           pageSize: 10,
           keyword: null,
-          username: null,
-          nickname: null,
-          roleId: null,
+          name: null,
+          code: null,
           state: null,
-          createTimeStart: null,
-          createTimeEnd: null,
-          pageSorts: [{
-            column: 'id',
-            asc: false
-          }]
+          pageSorts: []
         },
         stateOptions: [
           { label: '启用', value: 1 },
@@ -190,92 +188,58 @@
       }
     },
     created() {
+      this.setDefaultSort()
       this.getList()
     },
     methods: {
-      aaa() {
-        alert(99)
-      },
       getList() {
         this.listLoading = true
         sysRoleApi.getPageList(this.listQuery).then(response => {
           this.list = response.data.records
-          console.log(this.list)
           this.total = response.data.total
           this.listLoading = false
         });
       },
       handleFilter() {
-        // this.$refs.sysUserAdd.showxxx(666);
         this.listQuery.pageIndex = 1
-        console.log('search...')
-        console.log(this.listQuery)
-        console.log(this.searchColumn)
-        console.log(this.searchValue)
         this.listQuery.keyword = null;
-        this.listQuery.username = null;
-        this.listQuery.nickname = null;
+        this.listQuery.name = null;
+        this.listQuery.code = null;
         this.listQuery[this.searchColumn] = this.searchValue;
         this.getList()
       },
-      handleCreateTimeFilter() {
-        console.log(this.createTimeRange);
-        if (this.createTimeRange) {
-          this.listQuery.createTimeStart = this.createTimeRange[0];
-          this.listQuery.createTimeEnd = this.createTimeRange[1];
-          console.log(this.listQuery.createTimeStart)
-          console.log(this.listQuery.createTimeEnd)
-          this.handleFilter();
-        }
-      },
-      handleModifyStatus(row, status) {
-        this.$message({
-          message: '操作Success',
-          type: 'success'
-        })
-        row.status = status
+      setDefaultSort() {
+        // 设置默认排序
+        this.listQuery.pageSorts = [{
+          column: this.sortColumn,
+          asc: this.sortAsc
+        }]
       },
       sortChange(data) {
         const { prop, order } = data
-        if (prop === 'id') {
-          this.sortByID(order)
-        } else if (prop === 'createTime') {
-          this.sortByCreateTime(order)
-        }
-      },
-      sortByID(order) {
-        if (order === 'ascending') {
-          this.listQuery.pageSorts = [{
-            column: 'id',
-            asc: true
-          }]
+        if (prop === 'createTime') {
+          this.sortColumn = 'create_time'
         } else {
-          this.listQuery.pageSorts = [{
-            column: 'id',
-            asc: false
-          }]
+          this.sortColumn = prop
         }
+        this.sortAsc = order === 'ascending'
+        this.listQuery.pageSorts = [{
+          column: this.sortColumn,
+          asc: this.sortAsc
+        }]
         this.handleFilter()
       },
-      sortByCreateTime(order) {
-        if (order === 'ascending') {
-          this.listQuery.pageSorts = [{
-            column: 'create_time',
-            asc: true
-          }]
+      getSortClass: function(key) {
+        if (this.sortColumn === key) {
+          return this.sortAsc ? 'ascending' : 'descending'
         } else {
-          this.listQuery.pageSorts = [{
-            column: 'create_time',
-            asc: false
-          }]
+          return ''
         }
-        this.handleFilter()
       },
       handleAdd() {
         this.dialogStatus = 'create'
         this.$nextTick(() => {
           this.$refs.addPage.handle()
-          // this.$refs['dataForm'].clearValidate()
         });
       },
       handDetail(id) {
@@ -288,39 +252,36 @@
           this.$refs.updatePage.handle(id)
         });
       },
-      handleDelete(id, username) {
-        this.$confirm('您确定要删除 ' + username + ' ?', '删除提示', {
+      handleDelete(id, name) {
+        this.$confirm('您确定要删除 ' + name + ' ?', '删除提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-          this.$message({
-            type: 'success',
-            message: '删除成功!'
-          });
-        }).catch(() => {
-          this.$message({
-            type: 'info',
-            message: '已取消删除'
-          });
-        });
-      },
-      getSortClass: function(key) {
-        const sort = this.listQuery.sort
-        return sort === `+${key}` ? 'ascending' : 'descending'
+          sysRoleApi.delete(id).then(response => {
+            if (response.code === 200) {
+              this.$message({
+                type: 'success',
+                message: '删除成功!'
+              });
+              this.handleFilter()
+            }
+          })
+        })
       }
     }
   }
 </script>
 
 <style lang="scss">
-  #sys-role-list{
+  #sys-role-list {
   }
 
-  #sys-role-list .el-table th{
+  #sys-role-list .el-table th {
     padding: 6px 0px;
   }
-  #sys-role-list .el-table td{
+
+  #sys-role-list .el-table td {
     padding: 8px 0px;
     /*border: 1px solid red;*/
   }

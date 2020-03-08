@@ -43,6 +43,45 @@ sysRoleApi.detail = id => {
 }
 
 /**
+ * 添加角色
+ * @param data
+ * @returns {AxiosPromise}
+ */
+sysRoleApi.add = data => {
+  return request({
+    url: '/sysRole/add',
+    method: 'post',
+    data
+  })
+}
+
+/**
+ * 修改角色
+ * @param data
+ * @returns {AxiosPromise}
+ */
+sysRoleApi.update = data => {
+  return request({
+    url: '/sysRole/update',
+    method: 'post',
+    data
+  })
+}
+
+/**
+ * 删除角色
+ * @param data
+ * @returns {AxiosPromise}
+ */
+sysRoleApi.delete = id => {
+  return request({
+    url: '/sysRole/delete/' + id,
+    method: 'post'
+  })
+}
+
+
+/**
  * 修改系统角色权限
  * @param data
  * @returns {AxiosPromise}

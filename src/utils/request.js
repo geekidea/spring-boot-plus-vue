@@ -47,17 +47,37 @@ service.interceptors.response.use(
    */
   response => {
     const res = response.data
+    const code = res.code
+    const resultData = response.data.data;
 
     // if the custom code is not 20000, it is judged as an error.
-    if (res.code !== 200) {
-      Message({
-        message: res.message || 'Error',
-        type: 'error',
-        duration: 5 * 1000
-      })
-
-      // 50008: Illegal token; 50012: Other clients logged in; 50014: Token expired;
-      if (res.code === 50008 || res.code === 50012 || res.code === 50014) {
+    if (code !== 200) {
+      // 5001: 请求参数校验异常
+      if (code === 5001) {
+        let errorMessage = ''
+        if (resultData) {
+          if (resultData instanceof Array) {
+            const length = resultData.length
+            resultData.forEach((item, index) => {
+              console.log(index + '-' + item)
+              errorMessage += item
+              if (index !== (length - 1)) {
+                errorMessage += "<br/><br/>"
+              }
+            })
+          } else {
+            errorMessage += resultData
+          }
+        } else {
+          errorMessage = '请求参数校验异常'
+        }
+        Message({
+          message: errorMessage || 'Error',
+          type: 'error',
+          dangerouslyUseHTMLString: true,
+          duration: 5 * 1000
+        })
+      } else if (code === 50008 || code === 50012 || code === 50014) {
         // to re-login
         MessageBox.confirm('You have been logged out, you can cancel to stay on this page, or log in again', 'Confirm logout', {
           confirmButtonText: 'Re-Login',
@@ -67,6 +87,12 @@ service.interceptors.response.use(
           store.dispatch('user/resetToken').then(() => {
             location.reload()
           })
+        })
+      } else {
+        Message({
+          message: res.message || 'Error',
+          type: 'error',
+          duration: 5 * 1000
         })
       }
       Promise.reject(new Error(res.message || 'Error'))

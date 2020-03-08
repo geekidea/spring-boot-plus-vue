@@ -225,12 +225,8 @@
           departmentId: this.form.departmentId,
           roleId: this.form.roleId
         }
-        console.log(addParam)
         sysUserApi.add(addParam).then(response => {
           if (response.code === 200) {
-            console.log('add response')
-            // {code: 200, msg: "操作成功", success: true, data: null, time: "2020-02-26 11:25:02"}
-            console.log(response)
             this.restForm();
             this.$message({
               message: '保存系统用户成功',
@@ -241,7 +237,6 @@
         })
       },
       updateUser() {
-        console.log(this.form)
         const updateParam = {
           id: this.updateId,
           nickname: this.form.nickname,
@@ -251,12 +246,8 @@
           departmentId: this.form.departmentId,
           roleId: this.form.roleId
         }
-        console.log(updateParam)
         sysUserApi.update(updateParam).then(response => {
           if (response.code === 200) {
-            console.log('update response')
-            // {code: 200, msg: "操作成功", success: true, data: null, time: "2020-02-26 11:25:02"}
-            console.log(response)
             this.restForm();
             this.$message({
               message: '修改系统用户成功',

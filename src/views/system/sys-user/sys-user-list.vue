@@ -136,7 +136,6 @@
 </template>
 
 <script>
-  import sysUserApi from '@/api/system/sys-user-api'
   import waves from '@/directive/waves'
   import Pagination from '@/components/Pagination'
   import TreeSelect from '@/components/TreeSelect'
@@ -146,6 +145,7 @@
   import SysUserHead from './components/sys-user-head'
   import SysUserPassword from './components/sys-user-password'
 
+  import sysUserApi from '@/api/system/sys-user-api'
   import sysDepartmentApi from '@/api/system/sys-department-api'
   import sysRoleApi from '@/api/system/sys-role-api'
 
@@ -193,10 +193,7 @@
           state: null,
           createTimeStart: null,
           createTimeEnd: null,
-          pageSorts: [{
-            column: this.sortColumn,
-            asc: this.sortAsc
-          }]
+          pageSorts: []
         },
         treeSelectData: null,
         roleOptions: [],
@@ -211,6 +208,11 @@
       }
     },
     created() {
+      // 设置默认排序
+      this.listQuery.pageSorts = [{
+        column: this.sortColumn,
+        asc: this.sortAsc
+      }]
       this.getList()
       this.getDepartmentTree()
       this.getRoleList()

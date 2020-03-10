@@ -75,7 +75,7 @@
           <div class="operation-area" @click.stop>
             <el-link type="primary" @click="handDetail(row.id)">详情</el-link>
             <el-link type="warning" @click="handUpdate(row.id)">修改</el-link>
-            <el-link type="danger" @click="handleDelete(row.id, row.username)">删除</el-link>
+            <el-link type="danger" @click="handleDelete(row.id, row.name)">删除</el-link>
           </div>
         </template>
       </el-table-column>
@@ -185,15 +185,20 @@
           this.$refs.updatePage.handle(id)
         })
       },
-      handleDelete(id, username) {
-        this.$confirm('您确定要删除 ' + username + ' ?', '删除提示', {
+      handleDelete(id, name) {
+        this.$confirm('您确定要删除 ' + name + ' ?', '删除提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-          this.$message({
-            type: 'success',
-            message: '删除成功!'
+          sysPermissionApi.delete(id).then(response => {
+            if (response.code === 200) {
+              this.$message({
+                type: 'success',
+                message: '删除成功!'
+              })
+              this.handleFilter()
+            }
           })
         })
       }

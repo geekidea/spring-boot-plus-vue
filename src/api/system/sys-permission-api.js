@@ -85,7 +85,7 @@ sysPermissionApi.update = data => {
  */
 sysPermissionApi.delete = id => {
   return request({
-    url: '/sysPermission/delete' + id,
+    url: '/sysPermission/delete/' + id,
     method: 'post'
   })
 }

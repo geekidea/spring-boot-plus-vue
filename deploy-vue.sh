@@ -15,11 +15,11 @@
 # limitations under the License.
 
 #======================================================================
-# 1. 下载或更新spring-boot-plus-admin版本库
+# 1. 下载或更新spring-boot-plus-vue版本库
 # 2. npm打包
 # 3. 将dist目录复制到Nginx静态目录中
 # 4. 备份dist目录
-# 5. 运行spring-boot-plus-admin
+# 5. 运行spring-boot-plus-vue
 # author: geekidea
 # date: 2020-03-06
 #======================================================================
@@ -27,11 +27,11 @@
 NOW=$(date --date='0 days ago' "+%Y-%m-%d-%H-%M-%S")
 echo "${NOW}"
 
-if [ ! -d "spring-boot-plus-admin" ]; then
-  git clone https://github.com/geekidea/spring-boot-plus-admin.git
+if [ ! -d "spring-boot-plus-vue" ]; then
+  git clone https://gitee.com/geekidea/spring-boot-plus-vue.git
 fi
 
-cd spring-boot-plus-admin
+cd spring-boot-plus-vue
 rm -rf package-lock.json
 
 git checkout master
@@ -43,15 +43,15 @@ npm install
 npx vue-cli-service build
 
 cd ..
-if [ ! -d "spring-boot-plus-admin-back" ]; then
-  mkdir spring-boot-plus-admin-back
+if [ ! -d "spring-boot-plus-vue-back" ]; then
+  mkdir spring-boot-plus-vue-back
 fi
 
-cp -r -f spring-boot-plus-admin/dist spring-boot-plus-admin-back/spring-boot-plus-admin-back-"${NOW}"
-echo "back spring-boot-plus-admin success"
+cp -r -f spring-boot-plus-vue/dist spring-boot-plus-vue-back/spring-boot-plus-vue-back-"${NOW}"
+echo "back spring-boot-plus-vue success"
 
-rm -rf /home/www/admin
+rm -rf /home/www/vue
 nginx -s reload
-mv spring-boot-plus-admin/dist /home/www/admin
+mv spring-boot-plus-vue/dist /home/www/vue
 nginx -s reload
-echo "Deploy spring-boot-plus-admin success"
+echo "Deploy spring-boot-plus-vue success"

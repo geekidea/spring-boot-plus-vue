@@ -96,7 +96,17 @@ export const constantRoutes = [
     component: Layout,
     children: [
       {
-        path: 'http://47.105.159.10/api/swagger-ui.html',
+        path: 'http://47.105.159.10:8888/api/swagger-ui.html',
+        meta: { title: 'SwaggerUI', icon: 'link' }
+      }
+    ]
+  },
+  {
+    path: 'knife4j',
+    component: Layout,
+    children: [
+      {
+        path: 'http://47.105.159.10:8888/api/doc.html',
         meta: { title: 'SwaggerUI', icon: 'link' }
       }
     ]
@@ -106,7 +116,7 @@ export const constantRoutes = [
     component: Layout,
     children: [
       {
-        path: 'http://47.105.159.10:8888/api/instances/445767438708/details',
+        path: 'http://47.105.159.10:8000/instances/58c15acdd00c/details',
         meta: { title: 'SpringBootAdmin', icon: 'link' }
       }
     ]

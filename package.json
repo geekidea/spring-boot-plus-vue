@@ -1,9 +1,9 @@
 {
-  "name": "spring-boot-plus-admin",
+  "name": "spring-boot-plus-vue",
   "version": "4.2.1",
-  "description": "A magical vue admin. An out-of-box UI solution for enterprise applications. Newest development stack of vue. Lots of awesome features",
-  "author": "Pan <panfree23@gmail.com>",
-  "license": "MIT",
+  "description": "基于vue-element-admin开发的，对应spring-boot-plus接口的前端项目",
+  "author": "geekidea@qq.com",
+  "license": "Apache License",
   "scripts": {
     "dev": "vue-cli-service serve",
     "build:prod": "vue-cli-service build",
@@ -38,7 +38,7 @@
     "url": "git+https://github.com/PanJiaChen/vue-element-admin.git"
   },
   "bugs": {
-    "url": "https://github.com/PanJiaChen/vue-element-admin/issues"
+    "url": "https://github.com/PanJiaChen/vue-element-admin.git/issues"
   },
   "dependencies": {
     "axios": "0.18.1",

@@ -24,7 +24,7 @@ export default {
   },
   data() {
     return {
-      title: 'spring-boot-plus-admin',
+      title: 'spring-boot-plus-vue',
       logo: 'https://geekidea.oss-cn-chengdu.aliyuncs.com/spring-boot-plus/img/logo.png'
     }
   }

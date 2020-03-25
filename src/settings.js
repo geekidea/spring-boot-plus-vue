@@ -1,5 +1,5 @@
 module.exports = {
-  title: 'Spring Boot Plus Admin',
+  title: 'Spring Boot Plus Vue',
 
   /**
    * @type {boolean} true | false

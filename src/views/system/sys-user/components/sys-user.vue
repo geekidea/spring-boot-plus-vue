@@ -11,19 +11,20 @@
       label-position="right"
       label-width="80px"
       class="page-form"
-      style="width: 100%;">
+      style="width: 100%;"
+    >
 
       <el-form-item label="用户账号" prop="username">
-        <el-input v-model="form.username" placeholder="请输入用户账号" clearable :readonly="!isAdd"/>
+        <el-input v-model="form.username" placeholder="请输入用户账号" clearable :readonly="!isAdd" />
       </el-form-item>
       <el-form-item label="用户名称" prop="nickname">
-        <el-input v-model="form.nickname"  placeholder="请输入用户名称" clearable :readonly="isDetail"/>
+        <el-input v-model="form.nickname" placeholder="请输入用户名称" clearable :readonly="isDetail" />
       </el-form-item>
       <el-form-item label="手机号码" prop="phone">
-        <el-input v-model="form.phone" placeholder="请输入手机号码" clearable :readonly="isDetail"/>
+        <el-input v-model="form.phone" placeholder="请输入手机号码" clearable :readonly="isDetail" />
       </el-form-item>
-      <el-form-item label="密码" prop="password" v-if="isAdd">
-        <el-input type="password" v-model="form.password" placeholder="请输入密码" clearable autocomplete="off" show-password/>
+      <el-form-item v-if="isAdd" label="密码" prop="password">
+        <el-input v-model="form.password" type="password" placeholder="请输入密码" clearable autocomplete="off" show-password />
       </el-form-item>
       <el-form-item label="部门" prop="departmentId">
         <tree-select
@@ -35,7 +36,7 @@
       </el-form-item>
       <el-form-item label="角色" prop="roleId">
         <el-select v-model="form.roleId" filterable class="filter-item" placeholder="请选择" style="width: 100%" :disabled="isDetail">
-          <el-option v-for="item in roleOptions" :key="item.id" :label="item.name" :value="item.id"/>
+          <el-option v-for="item in roleOptions" :key="item.id" :label="item.name" :value="item.id" />
         </el-select>
       </el-form-item>
       <el-form-item label="状态" prop="state">
@@ -46,7 +47,7 @@
         </el-radio-group>
       </el-form-item>
       <el-form-item label="备注" prop="remark">
-        <el-input v-model="form.remark" :autosize="{ minRows: 2, maxRows: 4}" type="textarea" placeholder="请输入备注" :readonly="isDetail"/>
+        <el-input v-model="form.remark" :autosize="{ minRows: 2, maxRows: 4}" type="textarea" placeholder="请输入备注" :readonly="isDetail" />
       </el-form-item>
     </el-form>
     <div slot="footer" class="dialog-footer">
@@ -220,6 +221,7 @@
           username: this.form.username,
           nickname: this.form.nickname,
           phone: this.form.phone,
+          password: this.form.password,
           remark: this.form.remark,
           state: this.form.state,
           departmentId: this.form.departmentId,
